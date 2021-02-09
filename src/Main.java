@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,6 +47,7 @@ public class Main {
 
         binarySearch(stringArray, targetArray);
 
+        hashTable(searchArray, targetArray);
     }
 
     public static int linearSearchAlgo(String[] array, String target) {
@@ -257,6 +259,55 @@ public class Main {
         Instant instant2 = Instant.now();
 
         return Duration.between(instant1, instant2);
+    }
+
+    public static void hashTable(ArrayList<String> searchArray, ArrayList<String> targetArray) {
+        System.out.println();
+        System.out.println();
+        System.out.println("Start searching (hash table)...");
+
+        Instant instant1 = Instant.now();
+
+        Hashtable<Integer, String> hashtable = new Hashtable<Integer, String>(1100000);
+        ArrayList<Integer> targetHashed = new ArrayList<>();
+
+        for (String str : targetArray) {
+            targetHashed.add(Math.abs(str.hashCode()));
+        }
+
+        for(String str : searchArray) {
+            hashtable.put(Math.abs(str.hashCode()), str);
+        }
+
+        Instant instant2 = Instant.now();
+        Duration creatingTime = Duration.between(instant1, instant2);
+
+        Instant instant3 = Instant.now();
+
+        int counter = 0;
+        for (int i : targetHashed) {
+            if (hashtable.containsKey(i)) {
+                counter++;
+            }
+        }
+
+        Instant instant4 = Instant.now();
+        Duration searchingTime = Duration.between(instant3, instant4);
+
+        long minutes = creatingTime.toMinutes();
+        long seconds = creatingTime.toSeconds();
+        long millis = creatingTime.toMillisPart();
+
+        long sMinutes = searchingTime.toMinutes();
+        long sSeconds = searchingTime.toSeconds();
+        long sMillis = searchingTime.toMillisPart();
+
+        System.out.printf("Found %d / %d entries. Time taken: %d min. %d sec. %d ms.", counter, targetArray.size(),
+                minutes + sMinutes, seconds + sSeconds, millis + sMillis);
+        System.out.println();
+        System.out.printf("Creating time: %d min. %d sec. %d ms.", sMinutes, sSeconds, sMillis);
+        System.out.println();
+        System.out.printf("Searching time: %d min. %d sec. %d ms.", minutes, seconds, millis);
     }
 
     public static String[] getStringArray(ArrayList<String> array) {
